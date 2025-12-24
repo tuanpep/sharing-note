@@ -141,6 +141,11 @@ When a task is assigned, **first determine the workflow path** (Trivial/Small/Me
    - Consider project structure (monorepo, microservices, etc.)
    - Account for architecture patterns in use
 
+5. **External Research (when needed):**
+   - **Trivial:** Not needed
+   - **Small:** Only if unfamiliar technology
+   - **Medium/Large:** Use Web Research MCP for new technologies, security validation, benchmarks, compatibility checks
+
 **Deliverable:** 
 - **Trivial:** Brief acknowledgment
 - **Small:** Quick summary (3-5 bullet points)
@@ -149,6 +154,10 @@ When a task is assigned, **first determine the workflow path** (Trivial/Small/Me
 ### Phase 2: Technical Specification (The Spec)
 
 **Skip this phase for Trivial tasks.**
+
+**MCP Tools:**
+- **Sequential Thinking:** Use for Medium/Large tasks (8-12 sections) to structure complex specs
+- **Web Research:** Use for validating approaches, security practices, benchmarks, compliance
 
 Create a specification document in a timestamped folder at the workspace root.
 
@@ -238,6 +247,10 @@ Create a specification document in a timestamped folder at the workspace root.
 
 **Skip this phase for Trivial tasks.**
 
+**MCP Tools:**
+- **Sequential Thinking:** Use for Medium/Large tasks (5-15+ tasks) to map dependencies and critical paths
+- **Web Research:** Use for finding implementation examples, tooling capabilities, migration guides
+
 Once the Spec is approved, create an implementation plan in the same timestamped folder.
 
 **File to Create:**
@@ -287,6 +300,10 @@ Once the Spec is approved, create an implementation plan in the same timestamped
 
 Implement the tasks ONE BY ONE, following the approved plan.
 
+**MCP Tools:**
+- **Sequential Thinking:** Skip (plan already structured)
+- **Web Research:** Use for troubleshooting, syntax verification, real-time documentation
+
 **Execution Rules:**
 1. **One Task at a Time:**
    - Complete Task N fully before starting Task N+1
@@ -320,6 +337,10 @@ Implement the tasks ONE BY ONE, following the approved plan.
 ### Phase 5: Verification & Review
 
 After all tasks are complete, perform a comprehensive "Critic Pass".
+
+**MCP Tools:**
+- **Sequential Thinking:** Optional for complex verification
+- **Web Research:** Use for security validation, vulnerability checks, compliance verification
 
 **Verification Checklist:**
 
@@ -403,6 +424,32 @@ For changes affecting multiple services or components:
 
 ---
 
+## MCP Tools Integration
+
+**Two MCP tools enhance SDD workflow:**
+
+1. **Sequential Thinking:** Structures complex reasoning for Medium/Large tasks
+2. **Web Research:** Provides real-time information and validates decisions
+
+### Quick Reference
+
+| Task | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Phase 5 |
+|------|---------|---------|---------|---------|---------|
+| 🟢 Trivial | - | - | - | - | - |
+| 🟡 Small | Web (opt) | - | - | Web | - |
+| 🟠 Medium | Web | Seq + Web | Seq | Web | Web |
+| 🔴 Large | Web | Seq + Web | Seq | Web | Web |
+
+**Sequential Thinking:** Use for Medium/Large tasks in Phase 2 (Spec) and Phase 3 (Plan) to structure complex problems and map dependencies.
+
+**Web Research:** Use throughout all phases for technology evaluation, validation, troubleshooting, and compliance checks.
+
+**Recommended Setup:**
+- **Puppeteer MCP** (Free): `npx -y @modelcontextprotocol/server-puppeteer`
+- **Sequential Thinking:** Use built-in reasoning or dedicated MCP server
+
+---
+
 ## Quick Reference: Workflow Paths Summary
 
 | Path | When to Use | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Phase 5 | Time |
@@ -413,14 +460,3 @@ For changes affecting multiple services or components:
 | **🔴 Large** | 10+ files, architectural | Full discovery | Comprehensive (12 sections) | Comprehensive (15+ tasks) | Sequential + reporting | Full verify + audit | 1-2 hours planning |
 
 **Remember:** When in doubt, choose the more comprehensive path. It's better to over-plan than to under-plan and discover issues during execution.
-
----
-
-## How to Use This as a Cursor User Rule
-
-1. Copy the entire contents of this file
-2. Go to **Cursor Settings → Rules → User Rules**
-3. Paste the content into the User Rules field
-4. The rule will apply globally to all your projects when using Agent (Chat)
-
-**Note:** User Rules apply to Agent (Chat) only, not to Inline Edit (Cmd/Ctrl+K) or other AI features. For project-specific rules, use Project Rules in `.cursor/rules/` instead.
