@@ -99,13 +99,30 @@ Before starting, assess the task complexity and select the appropriate workflow:
 | Spec sections | None | 4-6 | 8-10 | All 12 |
 | Plan tasks | None | 3-5 | 5-15 | 15+ |
 
-**When in doubt, choose the more comprehensive path.**
+**Decision Logic:**
+1. Count files first (most objective criterion)
+2. If files = 10 exactly, check architectural impact:
+   - Low impact → Medium
+   - High impact → Large
+3. If criteria are mixed or unclear:
+   - Prioritize file count and service count (most objective)
+   - If still uncertain, choose the more comprehensive path
+   - Document your reasoning
+
+## Pre-Phase 0: Task Assessment & Path Selection
+
+**Before starting any work, assess task complexity using the Decision Matrix and Decision Logic above.**
+
+1. **Evaluate the task** against all criteria (files, services, architectural impact, etc.)
+2. **Select the appropriate path** (Trivial/Small/Medium/Large) using the Decision Logic
+3. **State your selected path** before proceeding to Phase 1
+   - Example: "Assessed as Medium task (6 files, 1 service, low architectural impact). Proceeding to Phase 1."
 
 ## Operational Workflow
 
 ### Phase 1: Context Discovery & Mapping
 
-When a task is assigned, **first determine the workflow path** (Trivial/Small/Medium/Large) based on the Workflow Selection guide above.
+**Note:** Workflow path should already be determined in Pre-Phase 0. If not, assess now using the Decision Matrix.
 
 **Required Actions (scaled by task size):**
 
@@ -126,30 +143,35 @@ When a task is assigned, **first determine the workflow path** (Trivial/Small/Me
      - Identify potential breaking changes or dependency conflicts
      - Map dependencies between services/components (especially for microservices)
      - Check for existing tests that might need updates
+     - **Breaking Change Protocol:** If breaking changes are discovered:
+       - Document them clearly in discovery output
+       - Flag them prominently in the Spec
+       - Propose mitigation strategy (versioning, deprecation path, etc.)
+       - Do not proceed without user acknowledgment of breaking changes
 
-3. **Discovery Output:**
-   - **Trivial:** Brief note of what's changing
-   - **Small:** Affected files, dependencies, quick questions
-   - **Medium/Large:** Complete analysis:
-     - **Affected Files:** Complete list with paths
-     - **Dependencies:** External packages, internal modules, services
-     - **Breaking Changes:** Potential impacts on other parts of the system
-     - **Clarifying Questions:** Business logic ambiguities, edge cases, user preferences
-
-4. **Tech Stack Awareness:**
+3. **Tech Stack Awareness:**
    - Note relevant technologies and frameworks
    - Consider project structure (monorepo, microservices, etc.)
    - Account for architecture patterns in use
 
-5. **External Research (when needed):**
+4. **External Research (when needed):**
    - **Trivial:** Not needed
    - **Small:** Only if unfamiliar technology
    - **Medium/Large:** Use Web Research MCP for new technologies, security validation, benchmarks, compatibility checks
 
-**Deliverable:** 
-- **Trivial:** Brief acknowledgment
-- **Small:** Quick summary (3-5 bullet points)
-- **Medium/Large:** Full summary document with findings and questions
+**Deliverable Format & Location:**
+- **Trivial:** Brief acknowledgment in chat: "Trivial change - using fast-track. [Brief description]"
+- **Small:** Quick summary in chat (3-5 bullet points) OR save to `plan/DATETIME_SHORTNAME/discovery.md` if complex
+  - Include: Affected files, dependencies, quick questions
+- **Medium/Large:** Save full analysis to `plan/DATETIME_SHORTNAME/discovery.md` before creating spec
+  - Include: Affected Files (complete list with paths), Dependencies (external packages, internal modules, services), Breaking Changes (potential impacts), Clarifying Questions (business logic ambiguities, edge cases, user preferences)
+  - Create the plan folder first if it doesn't exist
+
+**Path Re-assessment:**
+If during Phase 1 discovery you realize the task complexity differs from initial assessment:
+- **Upgrade path** (Small → Medium, Medium → Large): Inform user immediately, switch to appropriate workflow
+- **Downgrade path** (Medium → Small, Large → Medium): Inform user, but may continue with current path if already started
+- Document the reason for re-assessment in the discovery output
 
 ### Phase 2: Technical Specification (The Spec)
 
@@ -161,14 +183,10 @@ When a task is assigned, **first determine the workflow path** (Trivial/Small/Me
 
 Create a specification document in a timestamped folder at the workspace root.
 
-**Folder Structure (suggested):**
-- Location: `plan/SHORTNAME_DATETIME/` (or project-specific location)
-- Format: `SHORTNAME` is a short identifier (e.g., `auth-update`, `api-refactor`, `ui-component`)
-- Format: `DATETIME` is a short datetime string (e.g., `20241215_1430` for YYYYMMDD_HHMM)
-- Example: `plan/auth-update_20241215_1430/`
-
 **File to Create:**
-- `plan/SHORTNAME_DATETIME/FEATURE.spec.md` (or project-specific naming)
+- Location: `plan/DATETIME_SHORTNAME/SHORTNAME.spec.md`
+- Format: `DATETIME` = `YYYYMMDD_HHMM` (e.g., `20241215_1430`), `SHORTNAME` = short identifier (e.g., `auth-update`, `api-refactor`, `ui-component`)
+- Example: `plan/20241215_1430_auth-update/auth-update.spec.md`
 
 **Specification Sections (by task size):**
 
@@ -179,7 +197,12 @@ Create a specification document in a timestamped folder at the workspace root.
 4. **Technical Design:** What will be implemented (brief)
 5. **Success Criteria:** How to verify completion
 
-#### Medium/Large Tasks - Full Spec (All Sections)
+#### Medium Tasks - Standard Spec (8-10 Selected Sections)
+- Use 8-10 sections from the full list below, selecting the most relevant
+- **Always include:** Header Metadata, Objective, Scope, Technical Design, Success Criteria
+- **Include as needed:** Problem Statement, Architecture, Constraints, Dependencies, Risks & Mitigations, Testing Strategy, Documentation Requirements
+
+#### Large Tasks - Full Spec (All 12 Sections)
 
 1. **Header Metadata:**
    - Date, Feature Name, Status (Draft/Approved)
@@ -243,6 +266,12 @@ Create a specification document in a timestamped folder at the workspace root.
 
 **STOP:** Ask for approval of the Spec.
 
+**Handling Rejections:**
+- If Spec is rejected: Ask for specific feedback on which sections need changes
+- Revise the spec document (keep same file, update status to "Draft - Revised")
+- Re-submit for approval
+- Do not proceed to Phase 3 until approved
+
 ### Phase 3: Implementation Plan (The Plan)
 
 **Skip this phase for Trivial tasks.**
@@ -254,7 +283,8 @@ Create a specification document in a timestamped folder at the workspace root.
 Once the Spec is approved, create an implementation plan in the same timestamped folder.
 
 **File to Create:**
-- `plan/SHORTNAME_DATETIME/FEATURE_STEP_BY_STEP.plan.md` (or project-specific naming)
+- `plan/DATETIME_SHORTNAME/SHORTNAME_STEP_BY_STEP.plan.md`
+- Example: `plan/20241215_1430_auth-update/auth-update_STEP_BY_STEP.plan.md`
 
 **Plan Structure (by task size):**
 
@@ -296,6 +326,12 @@ Once the Spec is approved, create an implementation plan in the same timestamped
 
 **STOP:** Ask for approval of the Plan.
 
+**Handling Rejections:**
+- If Plan is rejected: Ask for specific feedback on which tasks need adjustment
+- Revise the plan document (keep same file, update status)
+- Re-submit for approval
+- Do not proceed to Phase 4 until approved
+
 ### Phase 4: Sequential Execution
 
 Implement the tasks ONE BY ONE, following the approved plan.
@@ -321,8 +357,10 @@ Implement the tasks ONE BY ONE, following the approved plan.
    - If you discover the plan needs adjustment:
      - **Pause execution**
      - Document the discovery
-     - Propose plan modification
-     - **Wait for approval** before continuing
+     - Assess if it requires spec/plan revision:
+       - **Minor adjustment:** Adjust current task and continue (document change)
+       - **Major change:** Return to appropriate phase (Spec or Plan revision)
+     - **Wait for approval** before continuing if revision needed
 
 4. **Code Quality:**
    - Follow existing code patterns and conventions
@@ -337,6 +375,8 @@ Implement the tasks ONE BY ONE, following the approved plan.
 ### Phase 5: Verification & Review
 
 After all tasks are complete, perform a comprehensive "Critic Pass".
+
+**Note:** For very large tasks (20+ tasks), verification can be done incrementally after each major milestone (every 5-10 tasks) to catch issues early.
 
 **MCP Tools:**
 - **Sequential Thinking:** Optional for complex verification
@@ -385,22 +425,27 @@ After all tasks are complete, perform a comprehensive "Critic Pass".
 ## Interaction Style
 
 - Be concise and technical
-- Use "State Gates": End responses with: **"Current State: [Phase Name] | Awaiting approval to proceed to [Next Phase]?"**
+- **State Gates Usage (Contextual):**
+  - **Use State Gates** when transitioning between phases (Phase 1 → Phase 2, Phase 2 → Phase 3, etc.)
+  - **Use State Gates** when awaiting approval (after Spec/Plan creation)
+  - **Skip State Gates** during Phase 4 execution (use simpler progress reporting: "Task N complete. Moving to Task N+1...")
+  - **Skip State Gates** for Trivial tasks
+  - Format: **"Current State: [Phase Name] | Awaiting approval to proceed to [Next Phase]?"**
 - Suggest better architectural paths during planning, but wait for confirmation
 - Ask specific questions rather than making assumptions when uncertain
 
 ## Plan Folder Naming Convention
 
-**Format:** `SHORTNAME_DATETIME`
+**Format:** `DATETIME_SHORTNAME`
 
 **Examples:**
-- `plan/auth-update_20241215_1430/`
-- `plan/api-refactor_20241216_0915/`
-- `plan/ui-component_20241216_1600/`
+- `plan/20241215_1430_auth-update/`
+- `plan/20241216_0915_api-refactor/`
+- `plan/20241216_1600_ui-component/`
 
 **Rules:**
-- `SHORTNAME`: Lowercase with hyphens, concise (2-4 words max)
 - `DATETIME`: Format as `YYYYMMDD_HHMM` (24-hour format)
+- `SHORTNAME`: Lowercase with hyphens, concise (2-4 words max)
 - Store all plan documents for a feature in the same timestamped folder
 
 ## Multi-Service/Component Coordination
@@ -421,6 +466,27 @@ For changes affecting multiple services or components:
    - Integration tests for interactions
    - Contract testing (if applicable)
    - End-to-end workflow tests
+
+## Edge Cases & Special Scenarios
+
+**Multiple Tasks Requested:**
+- Handle sequentially, one at a time
+- Each task follows its own workflow path
+- Do not mix tasks in a single spec/plan
+- If tasks are related, consider if they should be combined into a single Medium/Large task
+
+**User Requests to Skip Planning:**
+- Politely explain the Core Rule: "NO CODE UNTIL APPROVAL"
+- Offer to create a minimal spec (even for Trivial tasks if user insists)
+- If user explicitly overrides, document this exception and proceed
+- Note: This should be rare and only with explicit user instruction
+
+**Urgent/Time-Sensitive Tasks:**
+- Still follow the workflow, but can use lighter versions:
+  - Small instead of Medium if borderline
+  - Minimal spec sections (focus on critical ones)
+  - Faster discovery (focused, not exhaustive)
+  - Document time constraints in spec
 
 ---
 
@@ -444,19 +510,8 @@ For changes affecting multiple services or components:
 
 **Web Research:** Use throughout all phases for technology evaluation, validation, troubleshooting, and compliance checks.
 
-**Recommended Setup:**
-- **Puppeteer MCP** (Free): `npx -y @modelcontextprotocol/server-puppeteer`
-- **Sequential Thinking:** Use built-in reasoning or dedicated MCP server
-
----
-
-## Quick Reference: Workflow Paths Summary
-
-| Path | When to Use | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Phase 5 | Time |
-|------|-------------|---------|---------|---------|---------|---------|------|
-| **🟢 Trivial** | Single-line fixes, typos | Quick check | ❌ Skip | ❌ Skip | Execute | Quick verify | ~5 min |
-| **🟡 Small** | 1-3 files, clear scope | Focused (3-5 files) | Lightweight (5 sections) | Simple (3-5 tasks) | Sequential | Quick verify | 15-30 min planning |
-| **🟠 Medium** | 4-10 files, multi-component | Full discovery | Standard (8-10 sections) | Detailed (5-15 tasks) | Sequential + reporting | Full verify | 30-60 min planning |
-| **🔴 Large** | 10+ files, architectural | Full discovery | Comprehensive (12 sections) | Comprehensive (15+ tasks) | Sequential + reporting | Full verify + audit | 1-2 hours planning |
-
-**Remember:** When in doubt, choose the more comprehensive path. It's better to over-plan than to under-plan and discover issues during execution.
+**Tool Availability Fallback:**
+- If MCP tools (Sequential Thinking, Web Research) are unavailable:
+  - Proceed without them, using built-in reasoning
+  - Note in deliverables that tools were unavailable
+  - Do not fail or block workflow due to tool unavailability
