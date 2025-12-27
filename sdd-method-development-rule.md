@@ -161,9 +161,9 @@ Before starting, assess the task complexity and select the appropriate workflow:
 
 **Deliverable Format & Location:**
 - **Trivial:** Brief acknowledgment in chat: "Trivial change - using fast-track. [Brief description]"
-- **Small:** Quick summary in chat (3-5 bullet points) OR save to `plan/DATETIME_SHORTNAME/discovery.md` if complex
+- **Small:** Quick summary in chat (3-5 bullet points) OR save to `ROOT_WORKSPACE/plan/DATETIME_SHORTNAME/discovery.md` if complex
   - Include: Affected files, dependencies, quick questions
-- **Medium/Large:** Save full analysis to `plan/DATETIME_SHORTNAME/discovery.md` before creating spec
+- **Medium/Large:** Save full analysis to `ROOT_WORKSPACE/plan/DATETIME_SHORTNAME/discovery.md` before creating spec
   - Include: Affected Files (complete list with paths), Dependencies (external packages, internal modules, services), Breaking Changes (potential impacts), Clarifying Questions (business logic ambiguities, edge cases, user preferences)
   - Create the plan folder first if it doesn't exist
 
@@ -184,9 +184,9 @@ If during Phase 1 discovery you realize the task complexity differs from initial
 Create a specification document in a timestamped folder at the workspace root.
 
 **File to Create:**
-- Location: `plan/DATETIME_SHORTNAME/SHORTNAME.spec.md`
+- Location: `ROOT_WORKSPACE/plan/DATETIME_SHORTNAME/SHORTNAME.spec.md`
 - Format: `DATETIME` = `YYYYMMDD_HHMM` (e.g., `20241215_1430`), `SHORTNAME` = short identifier (e.g., `auth-update`, `api-refactor`, `ui-component`)
-- Example: `plan/20241215_1430_auth-update/auth-update.spec.md`
+- Example: `ROOT_WORKSPACE/plan/20241215_1430_auth-update/auth-update.spec.md`
 
 **Specification Sections (by task size):**
 
@@ -283,8 +283,8 @@ Create a specification document in a timestamped folder at the workspace root.
 Once the Spec is approved, create an implementation plan in the same timestamped folder.
 
 **File to Create:**
-- `plan/DATETIME_SHORTNAME/SHORTNAME_STEP_BY_STEP.plan.md`
-- Example: `plan/20241215_1430_auth-update/auth-update_STEP_BY_STEP.plan.md`
+- `ROOT_WORKSPACE/plan/DATETIME_SHORTNAME/SHORTNAME_STEP_BY_STEP.plan.md`
+- Example: `ROOT_WORKSPACE/plan/20241215_1430_auth-update/auth-update_STEP_BY_STEP.plan.md`
 
 **Plan Structure (by task size):**
 
@@ -492,14 +492,15 @@ Quick decision criteria for each stop point. Use the table below for fast refere
 **Format:** `DATETIME_SHORTNAME`
 
 **Examples:**
-- `plan/20241215_1430_auth-update/`
-- `plan/20241216_0915_api-refactor/`
-- `plan/20241216_1600_ui-component/`
+- `ROOT_WORKSPACE/plan/20241215_1430_auth-update/`
+- `ROOT_WORKSPACE/plan/20241216_0915_api-refactor/`
+- `ROOT_WORKSPACE/plan/20241216_1600_ui-component/`
 
 **Rules:**
 - `DATETIME`: Format as `YYYYMMDD_HHMM` (24-hour format)
 - `SHORTNAME`: Lowercase with hyphens, concise (2-4 words max)
 - Store all plan documents for a feature in the same timestamped folder
+- `ROOT_WORKSPACE`: is the root directory of the current IDE opened folder
 
 ## Multi-Service/Component Coordination
 
