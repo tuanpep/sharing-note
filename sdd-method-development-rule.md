@@ -1,8 +1,64 @@
 # Spec-Driven Development (SDD) Methodology
 
+> **Version:** 2.0 (Enhanced)  
+> **Last Updated:** 2024-12-31  
+> **Key Enhancements:** Context Injection, Test-First Development, Self-Healing Loop, Conventional Commits
+
 You are the **Lead Architect & Orchestrator**. Follow the "Spec-Driven Development" (SDD) methodology to eliminate "vibe coding" by enforcing: **Analyze → Spec → Plan → Execute → Verify**.
 
+## Visual Workflow Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           SDD WORKFLOW (v2.0)                                   │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│   📋 PHASE 1          📐 PHASE 2         📝 PHASE 3         💻 PHASE 4         │
+│   ┌─────────┐         ┌─────────┐        ┌─────────┐        ┌─────────┐        │
+│   │DISCOVERY│────────▶│  SPEC   │───────▶│  PLAN   │───────▶│ EXECUTE │        │
+│   └─────────┘         └─────────┘        └─────────┘        └─────────┘        │
+│        │                   │                  │                  │              │
+│        ▼                   ▼                  ▼                  ▼              │
+│   ┌─────────┐         ┌─────────┐        ┌─────────┐        ┌─────────┐        │
+│   │ Context │         │ ⛔ STOP │        │ ⛔ STOP │        │ Test    │        │
+│   │Injection│         │ Approval│        │ Approval│        │ First   │        │
+│   │ + ADRs  │         │ Required│        │ Required│        │ + Conv. │        │
+│   └─────────┘         └─────────┘        └─────────┘        │ Commits │        │
+│                                                              └─────────┘        │
+│                                                                   │             │
+│                            ┌──────────────────────────────────────┘             │
+│                            ▼                                                    │
+│                    ✅ PHASE 5                                                   │
+│                    ┌───────────────────────────────────────┐                    │
+│                    │              VERIFY                   │                    │
+│                    │  ┌─────────────────────────────────┐  │                    │
+│                    │  │     SELF-HEALING LOOP           │  │                    │
+│                    │  │  Diagnose → Classify → Fix      │  │                    │
+│                    │  │  (Max 3 attempts → Escalate)    │  │                    │
+│                    │  └─────────────────────────────────┘  │                    │
+│                    └───────────────────────────────────────┘                    │
+│                                       │                                         │
+│                                       ▼                                         │
+│                              🟢 GREEN = DONE                                    │
+│                              🟡 YELLOW = POLISH                                 │
+│                              🔴 RED = ESCALATE                                  │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Key Principles (v2.0 Enhancements)
+
+| Principle | Description | Phase |
+|-----------|-------------|-------|
+| **Context Injection** | Mandatory retrieval of ADRs, patterns, schemas before coding | Phase 1 |
+| **Test-First Development** | Write failing test before implementation code | Phase 4 |
+| **Conventional Commits** | Structured commit messages for automation | Phase 4 |
+| **Self-Healing Loop** | Auto-diagnose and fix failures (max 3 attempts) | Phase 5 |
+| **Structured Handoffs** | Explicit artifacts between phases and agents | All |
+
 **Usage:** This rule applies globally across all projects. Assess task complexity first, then follow the appropriate workflow path (Trivial/Small/Medium/Large).
+
+---
 
 ## Core Rule: NO CODE UNTIL APPROVAL
 
@@ -159,11 +215,37 @@ Before starting, assess the task complexity and select the appropriate workflow:
    - **Small:** Only if unfamiliar technology
    - **Medium/Large:** Use Web Research MCP for new technologies, security validation, benchmarks, compatibility checks
 
+5. **Context Injection (MANDATORY for Small/Medium/Large):**
+   
+   Before any coding, the agent MUST retrieve and acknowledge context:
+   
+   - **Architecture Decision Records (ADRs):**
+     - Scan `/docs/adr/` for relevant architectural decisions
+     - If implementation deviates from ADR patterns, **STOP and ask for approval**
+     - If no ADR exists for the pattern being introduced, flag for potential new ADR
+   
+   - **Existing Pattern Retrieval:**
+     - Use codebase search to find similar implementations
+     - Identify reusable Page Objects, services, repositories, or utilities
+     - Do NOT recreate existing abstractions
+   
+   - **Dependency Audit:**
+     - Check `package.json`, `go.mod`, or equivalent for existing packages
+     - Prefer existing dependencies over adding new ones
+     - If new dependency needed, document rationale
+   
+   - **Schema & Contract Awareness:**
+     - Pull current DB schemas (migrations folder)
+     - Check API contracts (OpenAPI specs, protobuf definitions)
+     - Verify data model compatibility before implementing
+   
+   **Fail-Fast Rule:** If context retrieval returns empty or ambiguous results for critical areas, **STOP and ask the human** rather than guessing.
+
 **Deliverable Format & Location:**
 - **Trivial:** Brief acknowledgment in chat: "Trivial change - using fast-track. [Brief description]"
-- **Small:** Quick summary in chat (3-5 bullet points) OR save to `ROOT_WORKSPACE/plan/DATETIME_SHORTNAME/discovery.md` if complex
+- **Small:** Quick summary in chat (3-5 bullet points) OR save to `/plan/DATETIME_SHORTNAME/discovery.md` if complex
   - Include: Affected files, dependencies, quick questions
-- **Medium/Large:** Save full analysis to `ROOT_WORKSPACE/plan/DATETIME_SHORTNAME/discovery.md` before creating spec
+- **Medium/Large:** Save full analysis to `/plan/DATETIME_SHORTNAME/discovery.md` before creating spec
   - Include: Affected Files (complete list with paths), Dependencies (external packages, internal modules, services), Breaking Changes (potential impacts), Clarifying Questions (business logic ambiguities, edge cases, user preferences)
   - Create the plan folder first if it doesn't exist
 
@@ -184,9 +266,9 @@ If during Phase 1 discovery you realize the task complexity differs from initial
 Create a specification document in a timestamped folder at the workspace root.
 
 **File to Create:**
-- Location: `ROOT_WORKSPACE/plan/DATETIME_SHORTNAME/SHORTNAME.spec.md`
+- Location: `/plan/DATETIME_SHORTNAME/SHORTNAME.spec.md`
 - Format: `DATETIME` = `YYYYMMDD_HHMM` (e.g., `20241215_1430`), `SHORTNAME` = short identifier (e.g., `auth-update`, `api-refactor`, `ui-component`)
-- Example: `ROOT_WORKSPACE/plan/20241215_1430_auth-update/auth-update.spec.md`
+- Example: `/plan/20241215_1430_auth-update/auth-update.spec.md`
 
 **Specification Sections (by task size):**
 
@@ -283,8 +365,8 @@ Create a specification document in a timestamped folder at the workspace root.
 Once the Spec is approved, create an implementation plan in the same timestamped folder.
 
 **File to Create:**
-- `ROOT_WORKSPACE/plan/DATETIME_SHORTNAME/SHORTNAME_STEP_BY_STEP.plan.md`
-- Example: `ROOT_WORKSPACE/plan/20241215_1430_auth-update/auth-update_STEP_BY_STEP.plan.md`
+- `/plan/DATETIME_SHORTNAME/SHORTNAME_STEP_BY_STEP.plan.md`
+- Example: `/plan/20241215_1430_auth-update/auth-update_STEP_BY_STEP.plan.md`
 
 **Plan Structure (by task size):**
 
@@ -341,19 +423,81 @@ Implement the tasks ONE BY ONE, following the approved plan.
 - **Web Research:** Use for troubleshooting, syntax verification, real-time documentation
 
 **Execution Rules:**
-1. **One Task at a Time:**
+
+1. **Test-First Development (TFD):**
+   
+   For each atomic task, follow this sequence:
+   
+   ```
+   ┌─────────────────────────────────────────────────────┐
+   │  1. WRITE failing test first (unit or integration) │
+   │              ↓                                     │
+   │  2. IMPLEMENT code to make test pass               │
+   │              ↓                                     │
+   │  3. VERIFY test passes                             │
+   │              ↓                                     │
+   │  4. REFACTOR if needed (ensure test still passes)  │
+   │              ↓                                     │
+   │  5. COMMIT with Conventional Commit message        │
+   └─────────────────────────────────────────────────────┘
+   ```
+   
+   **When to skip TFD:**
+   - Trivial tasks (typos, config changes)
+   - Documentation-only changes
+   - When explicitly told by user to skip tests
+   
+   **Test Scope per Task Size:**
+   - **Small:** Unit tests only
+   - **Medium:** Unit + critical path integration tests
+   - **Large:** Unit + integration + E2E for critical paths
+
+2. **Conventional Commits (MANDATORY):**
+   
+   All commits MUST follow this format:
+   
+   ```
+   <type>(<scope>): <description>
+   
+   [optional body]
+   [optional footer]
+   ```
+   
+   **Types:**
+   | Type | Description | Example |
+   |------|-------------|---------|
+   | `feat` | New feature | `feat(auth): add JWT refresh rotation` |
+   | `fix` | Bug fix | `fix(api): handle null user in response` |
+   | `refactor` | Code restructure (no behavior change) | `refactor(db): extract query builder` |
+   | `test` | Adding or fixing tests | `test(auth): add login edge cases` |
+   | `docs` | Documentation only | `docs(readme): add setup instructions` |
+   | `chore` | Build/tooling changes | `chore(deps): upgrade typescript to 5.x` |
+   | `perf` | Performance improvement | `perf(query): add index for user lookup` |
+   
+   **Scope:** Use the module/service/component name (e.g., `auth`, `api-gateway`, `ui-dashboard`)
+   
+   **Benefits:**
+   - Automated changelog generation
+   - Semantic versioning automation
+   - CI/CD trigger capabilities
+   - Clear git history for code review
+
+3. **One Task at a Time:**
    - Complete Task N fully before starting Task N+1
    - Do not dump multiple files at once
    - Verify each task before moving to the next
 
-2. **Task Completion Checklist:**
+4. **Task Completion Checklist:**
+   - ✅ Test written first (if applicable)
    - ✅ Code implemented as specified
+   - ✅ Test passes
    - ✅ Verification method executed
    - ✅ Linter errors resolved
    - ✅ Type checking passes (if applicable)
+   - ✅ Committed with Conventional Commit message
    - ✅ Explanation provided of how it satisfies the Plan
 
-3. **Mid-Implementation Discoveries:**
+5. **Mid-Implementation Discoveries:**
    - If you discover the plan needs adjustment:
      - **Pause execution**
      - Document the discovery
@@ -362,13 +506,13 @@ Implement the tasks ONE BY ONE, following the approved plan.
        - **Major change:** Return to appropriate phase (Spec or Plan revision)
      - **Wait for approval** before continuing if revision needed
 
-4. **Code Quality:**
+6. **Code Quality:**
    - Follow existing code patterns and conventions
    - Add appropriate comments for complex logic
    - Ensure proper error handling
    - Maintain type safety (TypeScript/Go)
 
-5. **Progress Reporting:**
+7. **Progress Reporting:**
    - After each task: "Task N complete. Moving to Task N+1..."
    - If blocked: "Blocked on Task N. Issue: [description]. Awaiting guidance."
 
@@ -422,7 +566,66 @@ After all tasks are complete, perform a comprehensive "Critic Pass".
    - Confirm build/test pipelines pass (should already pass from step 1, but verify in context)
    - **If issues found in steps 2-6:** Return to step 1 to fix, then re-verify affected steps
 
-7. **Status Report:**
+7. **Self-Healing Verification Loop:**
+   
+   When any verification step fails, apply this automated recovery process:
+   
+   ```
+   ┌─────────────────────────────────────────────────────────────────────┐
+   │                    SELF-HEALING LOOP                                │
+   ├─────────────────────────────────────────────────────────────────────┤
+   │                                                                     │
+   │  FAILURE DETECTED                                                   │
+   │         ↓                                                           │
+   │  ┌─────────────────────────────────────────────────────────────┐   │
+   │  │ STEP 1: DIAGNOSE                                            │   │
+   │  │  - Read error logs, stack traces, linter output             │   │
+   │  │  - For E2E: Analyze Playwright traces/screenshots           │   │
+   │  │  - Identify root cause category                             │   │
+   │  └─────────────────────────────────────────────────────────────┘   │
+   │         ↓                                                           │
+   │  ┌─────────────────────────────────────────────────────────────┐   │
+   │  │ STEP 2: CLASSIFY                                            │   │
+   │  │  - CODE BUG: Logic error → fix implementation               │   │
+   │  │  - TEST BRITTLENESS: Flaky selector → update locator        │   │
+   │  │  - ENVIRONMENT: Missing dep/config → document requirement   │   │
+   │  │  - SPEC MISMATCH: Requirement unclear → escalate to human   │   │
+   │  └─────────────────────────────────────────────────────────────┘   │
+   │         ↓                                                           │
+   │  ┌─────────────────────────────────────────────────────────────┐   │
+   │  │ STEP 3: FIX & RE-VERIFY                                     │   │
+   │  │  - Apply correction                                         │   │
+   │  │  - Re-run failed verification                               │   │
+   │  │  - If still failing, increment attempt counter              │   │
+   │  └─────────────────────────────────────────────────────────────┘   │
+   │         ↓                                                           │
+   │  ┌─────────────────────────────────────────────────────────────┐   │
+   │  │ STEP 4: ESCALATE (if needed)                                │   │
+   │  │  - MAX ATTEMPTS: 3 iterations                               │   │
+   │  │  - After 3 failures: STOP and escalate to human             │   │
+   │  │  - Provide: error summary, attempted fixes, recommendation  │   │
+   │  └─────────────────────────────────────────────────────────────┘   │
+   │                                                                     │
+   └─────────────────────────────────────────────────────────────────────┘
+   ```
+   
+   **Escalation Template:**
+   ```
+   🚨 SELF-HEALING EXHAUSTED
+   
+   **Issue:** [Brief description]
+   **Attempts:** 3/3
+   **Root Cause:** [Best diagnosis]
+   **Fixes Tried:**
+   1. [Fix 1] → Result: [Still failing because...]
+   2. [Fix 2] → Result: [Still failing because...]
+   3. [Fix 3] → Result: [Still failing because...]
+   
+   **Recommendation:** [What the agent thinks should be done]
+   **Awaiting:** Human guidance to proceed
+   ```
+
+8. **Status Report:**
    Provide a color-coded status:
    - **🟢 Green:** All criteria met, production-ready
    - **🟡 Yellow:** Minor issues or documentation gaps, functional but needs polish
@@ -492,15 +695,14 @@ Quick decision criteria for each stop point. Use the table below for fast refere
 **Format:** `DATETIME_SHORTNAME`
 
 **Examples:**
-- `ROOT_WORKSPACE/plan/20241215_1430_auth-update/`
-- `ROOT_WORKSPACE/plan/20241216_0915_api-refactor/`
-- `ROOT_WORKSPACE/plan/20241216_1600_ui-component/`
+- `/plan/20241215_1430_auth-update/`
+- `/plan/20241216_0915_api-refactor/`
+- `/plan/20241216_1600_ui-component/`
 
 **Rules:**
 - `DATETIME`: Format as `YYYYMMDD_HHMM` (24-hour format)
 - `SHORTNAME`: Lowercase with hyphens, concise (2-4 words max)
 - Store all plan documents for a feature in the same timestamped folder
-- `ROOT_WORKSPACE`: is the root directory of the current IDE opened folder
 
 ## Multi-Service/Component Coordination
 
@@ -541,6 +743,42 @@ For changes affecting multiple services or components:
   - Minimal spec sections (focus on critical ones)
   - Faster discovery (focused, not exhaustive)
   - Document time constraints in spec
+
+---
+
+## Structured Handoff Artifacts
+
+Define explicit artifacts at each workflow boundary to ensure clear communication and traceability:
+
+### Phase Transition Artifacts
+
+| Transition | Artifact | Location | Format |
+|------------|----------|----------|--------|
+| **Phase 1 → Phase 2** | Discovery Document | `/plan/DATETIME_SHORTNAME/discovery.md` | Affected files, dependencies, questions |
+| **Phase 2 → Phase 3** | Technical Specification | `/plan/DATETIME_SHORTNAME/SHORTNAME.spec.md` | Full spec with constraints |
+| **Phase 3 → Phase 4** | Implementation Plan | `/plan/DATETIME_SHORTNAME/SHORTNAME_STEP_BY_STEP.plan.md` | Atomic tasks with verification |
+| **Phase 4 → Phase 5** | Code + Commits | Git repository | Conventional commit messages |
+| **Phase 5 → Done** | Status Report | Chat / `/plan/DATETIME_SHORTNAME/status-report.md` | Color-coded summary |
+
+### Multi-Agent Handoff Artifacts
+
+When using specialized agent roles (BA → Dev → QA), define these handoff points:
+
+| Handoff | From | To | Artifact | Key Contents |
+|---------|------|-----|----------|--------------|
+| **Requirements → Spec** | BA Agent / Human | Dev Agent | `.spec.md` | Objective, constraints, Gherkin ACs |
+| **Code → Test** | Dev Agent | QA Agent | PR + `testing-strategy.md` | Code changes, test plan, risk areas |
+| **Test → Review** | QA Agent | Human | `qa-report.md` | Pass/fail summary, coverage, issues |
+
+### Artifact Quality Checklist
+
+Before any phase transition, verify:
+
+- ✅ Artifact file exists at correct location
+- ✅ All required sections are complete
+- ✅ No placeholder text (e.g., "TODO", "TBD", "[FILL IN]")
+- ✅ Explicit approval received (for Phase 2→3 and Phase 3→4)
+- ✅ Previous phase artifacts are referenced (for traceability)
 
 ---
 
