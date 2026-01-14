@@ -1,0 +1,106 @@
+# Docsify Research & Best Practices Guide
+
+> **Date**: 2026-01-14
+> **Purpose**: Reusable knowledge base for setting up high-quality documentation sites with Docsify.
+
+---
+
+## 1. Core Philosophy: Why Docsify?
+
+Unlike Docusaurus, Jekyll, or Hugo, **Docsify generates your documentation website on the fly at runtime**. 
+
+*   **No Build Step**: There is no static HTML generation step. You ship raw markdown files.
+*   **Client-Side Rendering**: A smart router fetches markdown files and renders them as HTML in the browser.
+*   **Simple Hosting**: Can be hosted on GitHub Pages, GitLab Pages, or any static web server (NGINX, Apache, Python http.server) without complex CI/CD build pipelines.
+
+---
+
+## 2. Essential Configuration (`window.$docsify`)
+
+The core configuration lives in `index.html`. Here are the high-value settings for a professional UX:
+
+| Setting | Value | Purpose |
+|---------|-------|---------|
+| `loadSidebar` | `true` | UI: Enables a custom `_sidebar.md` for navigation control. |
+| `nameLink` | `'/'` | UX: Ensures the logo/title always links back to home. |
+| `subMaxLevel` | `2` or `3` | UX: Generates an automatic Table of Contents (TOC) for the current page in the sidebar. |
+| `auto2top` | `true` | UX: Automatic scroll-to-top when navigating between pages (critical for long pages). |
+| `repo` | `'https://...'` | Community: Adds a "GitHub" corner widge linking to the source code. |
+| `routerMode` | `'hash'` | Default. Use `'history'` only if you have server-side rewrite rules configured. |
+
+---
+
+## 3. Top Tier Plugins Ecosystem
+
+A refined list of plugins that bring "pro" features to Docsify:
+
+### Navigation & UX
+*   **[docsify-sidebar-collapse](https://github.com/i-akame/docsify-sidebar-collapse)**:
+    *   *Why*: Essential for large documentation sets. Collapses sidebar groups to reduce clutter.
+    *   *Usage*: Include script + css. `sidebarDisplayLevel: 1` in config to start collapsed.
+*   **[docsify-pagination](https://github.com/imyelo/docsify-pagination)**:
+    *   *Why*: Adds "Previous / Next" buttons at the bottom of pages. Creates a linear reading flow.
+
+### Content Enhancement
+*   **[docsify-copy-code](https://github.com/jperasmus/docsify-copy-code)**:
+    *   *Why*: Adds a one-click "Copy" button to every code block. Mandatory for tech docs.
+*   **[docsify-tabs](https://jhildenbiddle.github.io/docsify-tabs)**:
+    *   *Why*: Render tabbed content (e.g., "NPM" vs "Yarn" installation) using markdown comments.
+*   **[docsify-plugin-flexible-alerts](https://github.com/fzankl/docsify-plugin-flexible-alerts)**:
+    *   *Why*: Replaces blockquotes (`>`) with styled alerts (Note, Warning, Danger). Matches Docusaurus/GitHub admonition style.
+
+### Visuals
+*   **[docsify-mermaid](https://github.com/docsifyjs/docsify-mermaid)**:
+    *   *Why*: Renders Mermaid diagrams direct from markdown code blocks.
+*   **[Zoom Image](https://docsify.js.org/#/plugins?id=zoom-image)**:
+    *   *Why*: Native plugin (just add script) to allow medium-style image zooming on click.
+
+---
+
+## 4. Theming Strategy
+
+### Recommended Theme: Docsify Darklight
+*   **[docsify-darklight-theme](https://github.com/boopathikumar/docsify-darklight-theme)**
+*   **Pros**: 
+    *   Built-in Dark/Light mode toggle (saved to local storage).
+    *   Clean, modern typography (Inter font).
+    *   Good contrast ratios.
+*   **Customization**: Override CSS variables in the `<style>` block:
+    ```css
+    :root {
+      --docsifyThemeColor: #3B82F6; /* Your Brand Color */
+      --docsifyDarklightThemeColor: #3B82F6;
+    }
+    ```
+
+### Alternative: Docsify Themeable
+*   Uses a CSS variable system for granular control but requires more initial setup.
+
+---
+
+## 5. Deployment Guide
+
+Since there is no build step, deployment is trivial.
+
+### Local Development
+```bash
+# Python (pre-installed)
+python3 -m http.server 3000
+
+# or Node.js
+npx docsify-cli serve .
+```
+
+### GitHub Pages
+1.  Enable GitHub Pages in repo settings.
+2.  Point source to `/docs` folder (or root `/` if repo is docs-only).
+3.  Done. No GitHub Actions needed.
+
+### NGINX / Docker
+Serve as static files. Ensure `404` pages redirect to `index.html` (or separate 404.md file) if using History mode.
+
+---
+
+## 6. Full "Pro" Template (`index.html`)
+
+See correct implementation in `survey-docs/docs/index.html` which integrates all the above recommendations into a cohesive setup.
