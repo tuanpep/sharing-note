@@ -1,62 +1,58 @@
 ---
 name: jira-issue-architect
-description: A high-performance engine for architecting professional Jira issues. Automatically classifies intent and applies high-value Jira Wiki Markup for Bugs, Stories, Tasks, and Spikes.
+description: Comprehensive engine for generating high-quality Jira issues. Detects issue type (Bug, Story, Task, Epic, Spike) and applies professional Jira Wiki Markup for clear developer communication.
 metadata:
   author: jira-issue-architect
-  version: "2.5.0"
+  version: "2.6.0"
   argument-hint: <raw-notes-or-technical-description>
 ---
 
 # Jira Issue Architect Skill
 
 ## Purpose
-To standardize and elevate engineering communication by transforming raw notes, logs, or requirements into structured, developer-ready Jira tickets. This skill acts as a professional bridge between product vision and technical execution.
+A universal system to standardize Jira communication. This skill transforms raw notes or technical requirements into structured, professional, and developer-ready Jira tickets using validated Wiki Markup.
 
 ## Instructions
 
-### 1. The Pre-Write Analysis
-Before generating output, agent must perform the following internal steps:
-* **Intent Classification**: Detect if the input is a **Bug** (fix), **Story** (feature), **Task** (technical chore), or **Spike** (research).
-* **Language Policy**: Maintain the user's primary language for the body of the text (e.g., Vietnamese). Use **English** for standard headers (e.g., "Acceptance Criteria") to maintain global compatibility.
-* **Technical Extraction**: Identify and highlight IDs, API endpoints, file paths, and environment details.
+### 1. Classification & Language Logic
+* **Intent Detection**: Categorize the input as **BUG** (error/regression), **STORY** (user value), **TASK** (technical work), or **SPIKE** (research).
+* **Language Handling**: Preserve the user's primary language (e.g., Vietnamese) for the descriptive body, but use **English** for standard headers (e.g., "Acceptance Criteria") for global compatibility.
 
-### 2. Style & Syntax Guide
-* **Visual Hierarchy**: Use `h1.` for titles and `h2.` for sections.
-* **Logical Dividers**: Use `----` to separate metadata from content.
-* **Code Standard**: Wrap all technical strings (IDs, CSS, code) in `{{monospaced syntax}}`.
-* **Callouts**: Use the `{panel}` macro for high-priority information (Actual vs. Expected).
+### 2. Formatting Standards
+* **Header Syntax**: Use `h1.` for titles and `h2.` for sections.
+* **Alignment Fix**: Use `||Header||` for all context tables to ensure centered, bolded, and proportional columns as per the required UI style.
+* **Technical Terms**: Wrap all IDs, variables, and API paths in `{{double curly braces}}`.
 
 ---
 
-## 3. The Professional Templates
+## 3. Structural Templates
 
-### A. BUG REPORT (The "Contract of Failure")
+### A. BUG (The Problem)
 * **Header**: `h1. Bug: [Component] Brief Summary`
-* **Context Table**: `|| Priority || Env || Module || Ref ID ||`
-* **Steps**: Use `#` for numbered reproduction steps.
-* **Evidence Analysis**:
+* **Metadata Table**: 
+|| Priority || Env || Module ||
+| Medium | Production/Staging | [Module Name] |
+----
+* **Steps**: Numbered `#` list for reproduction.
+* **Result Comparison**:
 {panel:title=ACTUAL RESULT|titleBGColor=#ffebe6|bgColor=#fff5f3}
-[The current broken behavior]
+[Describe the broken behavior]
 {panel}
 {panel:title=EXPECTED RESULT|titleBGColor=#e3fcef|bgColor=#f4fff9}
-[The correct/intended behavior]
+[Describe the correct behavior]
 {panel}
 
-### B. USER STORY (The "Gherkin" Format)
+### B. USER STORY (The Value)
 * **Header**: `h1. Story: [Feature Name]`
-* **User Statement**: `*As a* [role], *I want to* [action], *so that* [value].`
-* **Acceptance Criteria (AC)**:
-    * Use `* [ ]` checklists.
-    * Follow logic: `Given` (Context) + `When` (Action) + `Then` (Outcome).
-* **Design/Assets**: `[Figma Link|https://figma.com/...]`
+* **Requirement**: `*As a* [role], *I want to* [action], *so that* [value]`.
+* **Acceptance Criteria**: 
+* [ ] `Given` [context] + `When` [action] + `Then` [result].
 
-### C. TECHNICAL TASK / SPIKE (The "Execution" Format)
+### C. TASK / SPIKE (The Effort)
 * **Header**: `h1. Task: [Action Summary]` or `h1. Spike: [Research Topic]`
-* **Objective**: A single sentence defining success.
-* **Scope of Work**: Use a technical checklist `* [ ]`.
-* **Outcomes (for Spikes)**:
-    # Key decisions reached.
-    # Links to Proof of Concept (PoC).
+* **Objective**: Define the high-level success criteria.
+* **Scope of Work**: Specific technical checklist `* [ ]`.
+* **Technical Notes**: Use `{panel:title=TECH NOTES|titleBGColor=#deebff}` for implementation details.
 
 ---
 
@@ -68,36 +64,32 @@ h2. Definition of Done (DoD)
 * [ ] Unit/Integration tests passed.
 * [ ] Verified on Staging environment.
 * [ ] Documentation (Swagger/Wiki) updated.
-* [ ] Performance impact assessed.
 
-### Color Reference Map
-| Panel Type | Title BG | Body BG | Use Case |
-|:--- |:--- |:--- |:--- |
-| **Error** | #ffebe6 | #fff5f3 | Actual results, blockers |
-| **Success** | #e3fcef | #f4fff9 | Expected results, AC |
-| **Info** | #deebff | #f0f5ff | Tech notes, architecture |
+### Visual Reference Map
+| Element | Syntax | Usage |
+|:--- |:--- |:--- |
+| **Monospaced** | `{{text}}` | IDs, API endpoints, code. |
+| **Separators** | `----` | Logical section breaks. |
+| **Checklist** | `* [ ]` | Actionable items/DoD. |
 
 ---
 
 ## Examples
 
-### Input: "Need to research if we can use Cursor IDE for our team's frontend workflow. Timebox: 2 days."
+### Input: "Fix bug layout column Tên chiến dịch overlapping Người tạo. ID: CVKS080126002"
 **Output:**
-h1. Spike: Evaluation of Cursor IDE for Frontend Workflow
+h1. Bug: [FE] Campaign Name column overlaps Creator column
 ----
-h2. Objective
-Determine if transitioning to Cursor IDE will improve the frontend team's productivity and code quality compared to current VS Code setups.
+|| Priority || Env || Module ||
+| Medium | Production/Staging | Survey Report |
 ----
-h2. Research Goals
-* [ ] Evaluate AI-assisted refactoring capabilities.
-* [ ] Test codebase indexing for large React repositories.
-* [ ] Cost vs. Value analysis for Pro licenses.
+h2. Steps to Reproduce
+# Truy cập Danh sách công việc
+# Kiểm tra chiến dịch có tên dài: {{CVKS080126002}}
 ----
-{panel:title=TIME BOX|titleBGColor=#deebff}
-*Duration:* 2 Days
-*Deadline:* End of Sprint
+{panel:title=ACTUAL RESULT|titleBGColor=#ffebe6}
+Tên chiến dịch quá dài đè sang cột Người tạo.
 {panel}
-----
-h2. Expected Outcomes
-# Summary report comparing Cursor vs. VS Code.
-# Recommendation on license acquisition.
+{panel:title=EXPECTED RESULT|titleBGColor=#e3fcef}
+Tên chiến dịch tự động ngắt dòng và không đè lên các cột khác.
+{panel}
