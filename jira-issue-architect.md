@@ -15,7 +15,7 @@ To standardize and elevate engineering communication by transforming raw notes, 
 ## Instructions
 
 ### 1. The Pre-Write Analysis
-Before generating the output, the agent must perform the following internal steps:
+Before generating output, agent must perform the following internal steps:
 * **Intent Classification**: Detect if the input is a **Bug** (fix), **Story** (feature), **Task** (technical chore), or **Spike** (research).
 * **Language Policy**: Maintain the user's primary language for the body of the text (e.g., Vietnamese). Use **English** for standard headers (e.g., "Acceptance Criteria") to maintain global compatibility.
 * **Technical Extraction**: Identify and highlight IDs, API endpoints, file paths, and environment details.
@@ -47,7 +47,7 @@ Before generating the output, the agent must perform the following internal step
 * **User Statement**: `*As a* [role], *I want to* [action], *so that* [value].`
 * **Acceptance Criteria (AC)**:
     * Use `* [ ]` checklists.
-    * Follow the logic: `Given` (Context) + `When` (Action) + `Then` (Outcome).
+    * Follow logic: `Given` (Context) + `When` (Action) + `Then` (Outcome).
 * **Design/Assets**: `[Figma Link|https://figma.com/...]`
 
 ### C. TECHNICAL TASK / SPIKE (The "Execution" Format)
